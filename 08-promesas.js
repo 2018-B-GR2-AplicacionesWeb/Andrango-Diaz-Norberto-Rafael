@@ -1,6 +1,6 @@
 // 08-promesas.js
 const fs = require('fs');
-/*
+
 const promesa = (nombreArchivo) => {
     return new Promise(
         (resolve, reject) => {
@@ -63,108 +63,69 @@ promesa('07-texto.txt')
 
 
 //convertir apendFile a promesa
+//Deber: transformar el for each a promesa
 
-const promesaAppenFile = (nombreArchivo, contenidoArchivo)=> {
+
+
+const appendFile =(
+    nombreArchivo,
+    contenidoArchivo
+)=> {
+    if(error){
         return new Promise(
             (resolve, reject) => {
-    fs.readFile(
-        nombreArchivo,
-        'utf-8',
-        (error, contenidoLeido) => {
-
-            if (error) {
-                const contenido = contenidoArchivo;
-                fs.writeFile(
+                fs.readFile(
                     nombreArchivo,
-                    contenido,
-                    (err) => {
+                    'utf-8',
+                    (error, contenidoLeido) => {
                         if (error) {
                             reject(error);
                         } else {
-                            resolve(contenido);
+                            resolve(contenidoLeido);
                         }
                     }
                 );
-                //escribir el archivo
-            } else {
-                const contenido = contenidoLeido + contenidoArchivo;
-                //
-                fs.writeFile(nombreArchivo,
-                    contenido,
-                    (err) => {
+            }
+        )}
+    else{
+        return new Promise(
+            (resolve, reject) => {
+                fs.writeFile(
+                    nombreArchivo,
+                    contenidoArchivo,
+                    (error) => {
                         if (error) {
                             reject(error);
                         } else {
                             resolve(contenidoArchivo);
                         }
-                    });
-
-
+                    }
+                );
             }
-
-
-        }
-    )
-}
-    );
-}
-;
-console.log(promesa);
-
-promesaAppenFile('00-texto.txt', 'Hola')
-    .then(
-        (contenido) => {
-            console.log('Ok', contenido);
-
-        }
-    )
-    .catch(
-        (error) => {
-            console.log('Mal', error);
-        }
-    );
-*/
-
-//DEBER: transformar el for each a promesa
-
-promesaForEach = (arregloStrings)=>{
-    return new Promise(
-        (resolve, reject) => {
-            const arregloRespuestas = [];
-            arregloStrings.forEach(
-                (string, indice)=>{
-                    const nombreArchivo = `${indice}-${string}.txt`;
-                    const contenidoArchivo = 'string';
-
-                    fs.writeFile(nombreArchivo,
-                        contenidoArchivo,
-                        (err)=>{
-                            const respuesta = {
-                                nombreArchivo:nombreArchivo,
-                                contenidoArchivo:contenidoArchivo,
-                                error:err
-                            };
-                            arregloRespuestas.push(respuesta);
-                            const terminoElArreglo = arregloStrings.length == arregloRespuestas.length;
-                            if(terminoElArreglo){
-                                resolve(arregloRespuestas);
-                            }
-
-                        })
-                }
-
-            );
-
-        });
-
+        )
+    }
 };
 
-
-promesaForEach(['A', 'B', 'C'])
+console.log(promesa);
+promesa('07-texto.txt')
     .then(
-        (arregloRespuestas) => {
-            console.log('Ok', arregloRespuestas);
-
+const contenido = contenidoArchivo;
+   fs.writeFile(
+    nombreArchivo,
+    contenido,
+    (err) =>{
+        if(err){
+            console.log('Error',err);
+        }else{
+            callback(undefined, contenido);
+            callback(err);
+        }
+    }
+    );
+    )
+    .then(
+        (contenidoCompleto) => {
+            console.log(contenidoCompleto);
         }
     )
     .catch(
