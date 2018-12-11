@@ -1,64 +1,120 @@
-import {Get, Controller, Query, Param, Headers} from '@nestjs/common';
-import { AppService } from './app.service';
-import {Observable, ObservableInput, of} from "rxjs";
+import {
+    Get,
+    Controller,
+    Request,
+    Response,
+    Headers,
+    HttpCode,
+    HttpException,
+    Query,
+    Param,
+    Res,
+    Post
+} from '@nestjs/common';
+import {AppService} from './app.service';
+import {Observable, of} from "rxjs";
 
-@Controller('Usuario')
+// http://192.168.1.2:3000/Usuario/saludar     METODO -> GET
+// http://192.168.1.2:3000/Usuario/salir   METODO -> POST
+// http://192.168.1.2:3000/Usuario/registrar METODO -> PUT
+// http://192.168.1.2:3000/Usuario/borrar METODO -> DELETE
+// http://192.168.1.2:3000/Notas
+
+
+// Decorador -> FUNCION
+// SE EJECUTA ANTES DE ALGO
+@Controller('Usuario') // Decoradores!
 export class AppController {
-  //constructor(private readonly appService: AppService) {}
 
-  @Get('saludar')
-  //@Put, @Post
-  saludar(): string {
-    return 'Hola mundo';
-  }
+    usuarios = [
+        {
+            nombre: 'jkl',
+            id: 1
+        },
+        {
+            nombre: 'qwe',
+            id: 2
+        }
 
-    @Get('despedirse')
-    //@Put, @Post
-    despedirse(): Promise <string> {
-      return new Promise<string>((resolve, reject)=> {
-          resolve('Adios!');
-      })
+    ];
 
-    };
-
-    @Get('saludarObservable')
-    //@Put, @Post
-    saludarObservable(): Observable <string> {
-        return of('Hola mundo');
-
-    };
-
-    @Get('saludarP')
-    //@Put, @Post
-    saludarP(
+    @Get('saludar')
+    saludar(
         @Query() queryParams,
         @Query('nombre') nombre,
-    ): string {
-        return queryParams;
-        //return nombre;
+        @Headers('seguridad') seguridad,
+    ): string { // metodo!
+        return nombre;
+    }
 
-    };
-
-    @Get('segmentoUno/:idUsuario/segmentoDos/')
-    //@Put, @Post
+    // /Usuario/segmentoUno/12/segmentoDos
+    @Get('segmentoUno/:idUsuario/segmentoDos')
     ruta(
         @Param() todosParametrosRuta,
         @Param('idUsuario') idUsuario,
-    ): string {
+    ): string { // metodo!
         return idUsuario;
-        //return nombre;
-    };
+    }
 
-    @Get('saludo')
-    //@Put, @Post
-    saludo(
-        @Param() todosParametrosRuta,
+    @Get('despedirse')
+    @HttpCode(201)
+    despedirse(): Promise<string> {
+        return new Promise<string>(
+            (resolve, reject) => {
+
+                throw new HttpException({
+                        mensaje: 'Error en despedirse',
+                    },
+                    400);
+            }
+        );
+    }
+
+    @Get('tomar')
+    @HttpCode(201)
+    tomar(): string { // metodo!
+        return 'Estoy borracho';
+    }
+
+    @Get('saludarObservable')
+    saludarObservable(): Observable<string> { // metodo!
+        return of('Hola mundo');
+    }
+
+    @Get('inicio')
+    inicio(
+        @Res() response
+
+    ){
+        response.render('inicio', {
+            nombre: 'Rafael',
+            arreglo: this.usuarios
+        });
+    }
+
+
+    @Post('borrar/:idUsuario')
+    borrar(
+
         @Param('idUsuario') idUsuario,
-        @Headers('seguridad') seguridad
-    ): string {
-        return idUsuario;
-        //return nombre;
-    };
+        @Res() response
+
+    ){
+        const indiceUsuario = this.usuarios.findIndex(
+            (usuario)=>usuario.id === Number(idUsuario)
+
+        );
+
+        this.usuarios.splice(indiceUsuario, 1);
+
+        response.render('inicio', {
+            nombre: 'Rafael',
+            arreglo: this.usuarios
+
+        });
+    }
+
+
+
+
 }
-
-
